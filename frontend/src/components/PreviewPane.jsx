@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import LivePreview from "./LivePreview";
-
+import { serverEndpoint } from "../config";
 const PreviewPanel = () => {
   const [jsx, setJsx] = useState("");
   const [css, setCss] = useState("");
@@ -23,7 +23,7 @@ const PreviewPanel = () => {
   }, []);
 
   const downloadZip = async () => {
-    const res = await fetch("http://localhost:8001/prompt/export", {
+    const res = await fetch(`${serverEndpoint}/prompt/export`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ jsx, css }),
