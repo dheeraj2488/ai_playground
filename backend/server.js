@@ -13,8 +13,11 @@ mongoose.connect(process.env.MONGO_URI, {
     useUnifiedTopology: true,
   }).then(()=> console.log("MongoDB connected successfully"));
 
-
-app.use(cors());
+  const corsOptions = {
+    origin : process.env.CLIENT_ENDPOINT ,  // 
+    credentials : true, //allow cookies to be sent
+  }
+  app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 app.use('/auth', authRoutes);

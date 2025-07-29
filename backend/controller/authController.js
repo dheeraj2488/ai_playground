@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Users = require("../models/User");
 const bcrypt = require("bcryptjs");
-
+const { OAuth2Client } = require("google-auth-library");
 const authController = {
   loginUser: async (req, res) => {
     try {
@@ -84,6 +84,56 @@ const authController = {
       res.status(500).json({ message: "Internal server error" });
     }
   },
+  googleAuth: async (req, res) => {
+    // console.log("Google Auth called" , req.body);
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({ message: "invalid request" });
+    }
+
+    try {
+      const googleClinet = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+      const response = await googleClinet.verifyIdToken({
+        idToken: idToken,
+        audience: process.env.GOOGLE_CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+      });
+
+      const payload = response.getPayload();
+
+      const { sub: googleId, email } = payload;
+
+      let data = await Users.findOne({ email: email });
+
+      if (!data) {
+        //create new user
+        data = new Users({
+          email: email,
+          isGoogleUser: true,
+          googleId: googleId,
+        });
+
+        await data.save();
+      }
+
+      const userDetails = {
+        id: data._id ? data._id : googleId,
+        email: data.email,
+      };
+
+      const token = jwt.sign(userDetails, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      res.json({ message: "User authenticated",token :  token , userDetails: userDetails });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+  verify : async(req, res) => {
+    return res.status(200).json({ success: true, user: req.user})
+  }
 };
 
 module.exports = authController;
