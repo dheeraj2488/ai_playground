@@ -125,7 +125,7 @@ const authController = {
         expiresIn: "1h",
       });
 
-      res.json({ message: "User authenticated",token :  token , userDetails: userDetails });
+      res.json({ message: "User authenticated",token :  token , user: userDetails });
     } catch (err) {
       console.log(err);
       return res.status(500).json({ message: "Internal Server Error" });
