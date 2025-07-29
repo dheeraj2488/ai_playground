@@ -22,11 +22,14 @@ const ChatPanel = () => {
     setChatHistory(updatedHistory);
 
     try {
-      const res = await axios.post(`${serverEndpoint}/prompt/"`, {
+   
+      const res = await axios.post(`${serverEndpoint}/prompt/`, {
         prompt,
       });
 
       const { jsx, css } = res.data;
+      // console.log("Received JSX:", jsx);
+      // console.log("Received CSS:", css);
       updatedHistory.push({ role: "ai", text: jsx });
       setChatHistory(updatedHistory);
 
@@ -62,7 +65,7 @@ const ChatPanel = () => {
   return (
     <div className="w-full h-full p-4 flex flex-col">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-800"> Text to code</h2>
+        <h2 className="text-xl font-bold text-gray-800"> History </h2>
         <button
           onClick={handleClear}
           className="text-sm text-red-500 hover:text-red-700"
@@ -92,7 +95,7 @@ const ChatPanel = () => {
           className="p-2 rounded border resize-none h-24"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Enter prompt"
+          placeholder="Enter prompt to create a React component with jsx and css" 
         />
         <button
           type="submit"

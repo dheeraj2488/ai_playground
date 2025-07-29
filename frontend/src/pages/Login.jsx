@@ -46,7 +46,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error("Login error:", err);
-      alert("Login failed. Please check credentials.");
+      toast.error("Login failed. Please check credentials.");
     }
   };
 
@@ -61,8 +61,8 @@ export default function Login() {
       );
 
       localStorage.setItem("token", response.data.token);
-      toast.success("Login successful");
       loginUser(response.data.user);
+      toast.success("Login successful");
       navigate("/");
     } catch (error) {
       console.log(error);
